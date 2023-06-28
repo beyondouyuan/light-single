@@ -1,0 +1,18 @@
+.tabs {
+    :global {
+        .ant-tabs-content-holder {
+            overflow: auto;
+            overflow-x: hidden;
+            height: calc(100vh - 80px);
+            padding-right: 8px;
+
+            &::-webkit-scrollbar {
+                width: 0px;
+            }
+
+            .ant-form-item {
+                margin-bottom: 8px;
+            }
+        }
+    }
+}

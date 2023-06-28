@@ -1,0 +1,38 @@
+import Left from "./left";
+import styles from "./index.module.less";
+import { useEffect, useState } from "react";
+import Bus, { BUS_KEYS } from "./bus";
+import Center from "./center";
+import Right from "./right";
+
+export default function LightSimple() {
+    const [activityColumn, setActivityColumn] = useState({})
+
+    useEffect(() => {
+        const focusKey = Bus.on(BUS_KEYS.focus, function (column) {
+            //防止属性配置表单的onChange不触发
+            setTimeout(() => {
+                setActivityColumn(column)
+            });
+        })
+        return () => {
+            Bus.remove(focusKey)
+        }
+    }, [])
+
+
+    return <div className={styles.main}>
+        <div className={styles.left}>
+            <div className={styles.header}>
+                Light Simple
+            </div>
+            <Left />
+        </div>
+        <div className={styles.center}>
+            <Center activityColumn={activityColumn} />
+        </div>
+        <div className={styles.right}>
+            <Right activityColumn={activityColumn}/>
+        </div>
+    </div>
+}
