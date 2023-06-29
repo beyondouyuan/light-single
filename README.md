@@ -5,8 +5,12 @@
 
 此项目是 [Light2f](https://light2f.com) 剥离的单机版，可以注册体验、示例查看、文档阅读
 更多问题也可以加入 QQ 交流群：539848770
+
+### 仓库地址
+[gitee 地址](https://gitee.com/MiLuBianFu/light-single)
+[github 地址](https://github.com/yangaijun/light-single)
 ### 环境建议
-node 16 + ，npm 8 +，版本未测试
+node 16 + ，npm 8 +，其它版本未测试
 ### 安装依赖
 
 `npm i --legacy-peer-deps`
