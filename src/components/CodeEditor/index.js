@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useMemo, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import AceEditor from "react-ace"
 import "ace-builds/webpack-resolver"
 import "ace-builds/src-noconflict/theme-clouds"
 import "ace-builds/src-noconflict/mode-javascript"
 import "ace-builds/src-noconflict/mode-less"
 import "ace-builds/src-noconflict/ext-language_tools"
+import "ace-builds/src-noconflict/mode-json"
 import { renderJs } from '../codeText'
 import { uniqueId } from 'lodash'
 import { Modal } from 'antd'
@@ -25,7 +26,7 @@ function trimHasString(m, s) {
  */
 export default function CodeEditor({
     mode = "javascript",
-    style = { height: 120, width: 258 },
+    style = { height: 120, width: 260 },
     value,
     completions,
     placeholder,
@@ -37,20 +38,11 @@ export default function CodeEditor({
 }) {
     const aceRef = useRef()
     const [innerValue, setInnerValue] = useState()
-    const defaultCompletions = useMemo(() => {
-        if (mode === 'javascript') {
-            return [
-                { caption: 'console.log', value: 'console.log()', score: 1, meta: '控制台' },
-                { caption: 'JSON.stringify', value: 'JSON.stringify()', score: 1 }
-            ]
-        }
-        return []
-    }, [mode])
     //获取基本代码提示
     const getCompleters = useCallback(() => {
         const getCompletions = {
             getCompletions: function (editors, session, pos, prefix, callback) {
-                callback(null, [...defaultCompletions, ...completions]);
+                callback(null, [...completions]);
             }
         }
         return isSet ? [
@@ -59,7 +51,7 @@ export default function CodeEditor({
             getCompletions,
             ...allAceCompletions
         ]
-    }, [completions, isSet, defaultCompletions])
+    }, [completions, isSet])
     //处理异步代码提示
     const setAsycCompletions = useCallback((value) => {
         setInnerValue(value)
@@ -84,9 +76,10 @@ export default function CodeEditor({
 
     useEffect(() => {
         if (value && typeof value !== 'string') {
-            console.error('react-ace value must be string, but get', value)
             setInnerValue(value?.toString())
-        } else { setInnerValue(value) }
+        } else { 
+            setInnerValue(value) 
+        }
     }, [value])
 
     if (style) {
@@ -99,10 +92,9 @@ export default function CodeEditor({
         ref={aceRef}
         mode={mode}
         style={style}
-        name={"ace" + uniqueId()}
+        name={"ace_" + uniqueId()}
         placeholder={placeholder}
         theme="clouds"
-        fontSize={14}
         enableSnippets
         enableLiveAutocompletion
         highlightActiveLine

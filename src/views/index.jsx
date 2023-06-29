@@ -10,6 +10,7 @@ export default function LightSimple() {
 
     useEffect(() => {
         const focusKey = Bus.on(BUS_KEYS.focus, function (column) {
+            Bus.set(BUS_KEYS.activeUUID, column.uuid)
             //防止属性配置表单的onChange不触发
             setTimeout(() => {
                 setActivityColumn(column)
@@ -20,11 +21,13 @@ export default function LightSimple() {
         }
     }, [])
 
-
     return <div className={styles.main}>
         <div className={styles.left}>
             <div className={styles.header}>
                 Light Simple
+                <div className={styles.doc}>
+                <a href="https://light2f.com" target={"_blank"}>文档地址</a> 
+                </div>
             </div>
             <Left />
         </div>
@@ -32,7 +35,7 @@ export default function LightSimple() {
             <Center activityColumn={activityColumn} />
         </div>
         <div className={styles.right}>
-            <Right activityColumn={activityColumn}/>
+            <Right activityColumn={activityColumn} />
         </div>
     </div>
 }

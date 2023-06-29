@@ -1,10 +1,10 @@
 import { isComponent } from '../utils/util';
 import Bus, { BUS_KEYS } from '../bus';
-import { PAGE_ACTIVE_COLUMN_UUID } from '../types';
+import { PAGE_ACTIVE_COLUMN_UUID } from '../config';
 import CodeEditor from 'components/CodeEditor';
 import { componentTypes } from '../config';
 import { ExpandOutlined } from '@ant-design/icons';
-// import { toInitCodeRefs } from 'views/light/utils/icode';
+import { toInitCodeRefs } from 'views/utils/icode';
 import { Tooltip } from 'antd';
 import styles from './renders.module.less'
 //缓存
@@ -130,20 +130,9 @@ export const modalAsyncCompletions = [
     }
 ]
 //util 使用方法提示
-export const utilCompletions = [
-    { caption: '$util.setUserMenuPaths()', value: '$util.setUserMenuPaths([])', score: 2, meta: '设置权限菜单' },
-    { caption: '$util.setPageLoading()', value: '$util.setPageLoading()', score: 2, meta: '设置页面是否加载中' },
-    { caption: '$util.setUserId(userId)', value: '$util.setUserId(id)', score: 2, meta: '设置用户id, ' },
-    { caption: '$util.getUserId', value: '$util.getUserId()', score: 2, meta: '获取用户id' },
-    { caption: '$util.setToken(string)', value: '$util.setToken(token)', score: 2, meta: '设置用户token' },
-    { caption: '$util.getToken', value: '$util.getToken()', score: 2, meta: '获取用户token' },
-    { caption: '$util.dayjs', value: '$util.dayjs()', score: 2, meta: '日期库' },
-    { caption: '$util.download(二进制,文件名)', value: '$util.download(blob, filename)', score: 2, meta: '下载文件' }
-]
+export const utilCompletions = []
 //系统可访问变量
-export const sysCompletions = [
-    { caption: '$sys.pageMenuOptions', value: '$sys.pageMenuOptions', score: 2, meta: '项目的页面菜单' },
-]
+export const sysCompletions = []
 //分页的提示
 const paginationParamsCompletions = [
     { caption: 'params.value', value: 'params.value', score: 1, meta: '当前值' },
@@ -192,8 +181,7 @@ export function getRefCompletions() {
     if (uuid === preUUIDs.ref) {
         return preRefCompletions
     }
-    //todo
-    const refs = [] // toInitCodeRefs(list)
+    const refs = toInitCodeRefs(list)
     const completions = []
 
     for (let refName in refs) {
@@ -329,18 +317,7 @@ const ruleCompletions = [
     { caption: 'tip:len', value: 'len', score: 2, meta: '长度len[min][:max]' },
     { caption: 'tip:function', value: `({data, value}) => {\n    return (true) ? Promise.resolve() : Promise.reject('error message')\n}`, score: 2, meta: '验证函数' }
 ]
-const historyState = {
-    caption: `$history.state`,
-    value: `$history.state.`,
-    meta: "url上参数{}",
-    score: 1
-}
-const historyGoBack = {
-    caption: `$history.goBack`,
-    value: `$history.go(-1)`,
-    score: 0,
-    meta: "返回"
-}
+
 //缺省接口&设设置变量提示
 export const defaultCompletions = {
     serviceCompletions: [],
@@ -348,8 +325,8 @@ export const defaultCompletions = {
     varSetCompletions: [],
     refCompletions: [],
     functionCompletions: [],
-    routerCompletions: [historyGoBack],
-    globalDataCompletions: [historyState],
+    routerCompletions: [],
+    globalDataCompletions: [],
     ruleCompletions: [...ruleCompletions],
     globalTmpCompletions: []
 }
@@ -427,39 +404,16 @@ export function setDefaultFunctionCompletions(arr = []) {
 
     defaultCompletions.functionCompletions = completions
 }
-//设置函由跳转的提示,TODO  还没有用 啊啊啊啊啊
+//设置函由跳转的提示
 export function setDefaultRouterCompletions(arr = []) {
-    const completions = [historyGoBack]
-    for (let item of arr) {
-        //push
-        let pushCompletion = {
-            caption: `$history.push('${item.pageRouter}')`,
-            value: `$history.push('${item.pageRouter}')`,
-            meta: '跳到' + item.pageName,
-            score: 0
-        }
-        //replace
-        let repalceCompletion = {
-            caption: `$history.replace('${item.pageRouter}')`,
-            value: `$history.replace('${item.pageRouter}')`,
-            meta: '替换到' + item.pageName,
-            score: 0
-        }
-
-        completions.push(pushCompletion, repalceCompletion)
-    }
+    const completions = []
+    
     defaultCompletions.routerCompletions = completions
 }
 //设置全局数据提示, 从常量字符串中取
-export function setGlobalDataCompletions(arr = [], useHistoryState = true) {
+export function setGlobalDataCompletions(arr = []) {
     const completions = []
-    if (useHistoryState) {
-        completions.push(
-            //路由上数据也是全局数据的一种
-            historyState
-        )
-    }
-
+    
     for (let item of arr) {
         let completion = {
             caption: `$global.${item}`,
@@ -491,21 +445,12 @@ export function appendRuleCompletions(arr = []) {
  * @returns 
  */
 const codeRender = ({ value, $base: { onChange, disabled, onEvent, placeholder: ph } }, completions, asycCompletions, isSet, placeholder, mode) => {
-    let tempompletions = completions
-    if (defaultCompletions.globalTmpCompletions?.length) {
-        if (completions != null) {
-            tempompletions = [...completions, ...defaultCompletions.globalTmpCompletions]
-        } else {
-            tempompletions = [...defaultCompletions.globalTmpCompletions]
-        }
-    }
-
     return <div className={styles.renderCode}>
         <CodeEditor
             mode={mode}
             isSet={isSet}
             value={value}
-            completions={tempompletions}
+            completions={completions}
             placeholder={ph || placeholder}
             asycCompletions={asycCompletions}
             onChange={onChange}
@@ -514,7 +459,7 @@ const codeRender = ({ value, $base: { onChange, disabled, onEvent, placeholder: 
             title='放大'
             className={styles.expend}
             onClick={_ => {
-                onEvent('dbclick', { value, completions: tempompletions, asycCompletions, placeholder, isSet, mode })
+                onEvent('dbclick', { value, completions: completions, asycCompletions, placeholder, isSet, mode })
             }}
         />}
         {disabled && <Tooltip title="设置 字段名/变量名/数据 后有效">

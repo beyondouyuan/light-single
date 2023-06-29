@@ -6,15 +6,15 @@ import {
     activityDIVLeftBorder,
     defaultDIVLeftBorder,
     defaultElementBgColor,
-    activityElementBgColor
+    activityElementBgColor,
+    UsedType
 } from 'views/config'
 import { clone, isSort } from 'views/utils/util'
 import classnames from 'classnames'
 import update from 'immutability-helper'
 import Bus, { BUS_KEYS } from 'views/bus'
 import { useCanPutIn, useClickPutTo } from 'hooks'
-import { useSelector } from 'react-redux'
-import { UsedType } from 'views/types'
+import { useSelector } from 'react-redux' 
 import { ExclamationCircleOutlined, RightOutlined, DownOutlined } from '@ant-design/icons'
 import './index.less'
 

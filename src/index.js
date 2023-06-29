@@ -1,10 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import prettier from 'prettier/esm/standalone.mjs'
 import parserBabel from 'prettier/esm/parser-babel.mjs'
+import Freedomen from 'freedomen'
+import './index.css';
+
+Freedomen.setDefaultConfigs(() => {
+  return {
+    '-g@small': {
+      size: 'small'
+    },
+    Form: {
+      labelCol: { span: 4 }
+    },
+    'select*': {
+      allowClear: true
+    },
+    'input,input@*,input-*': {
+      allowClear: true,
+      changeEventType: 'blur'
+    },
+    'autocomplete*': {
+      changeEventType: 'blur'
+    }
+  }
+})
 
 window.codeFormart = function (value) {
   return prettier.format(value, {

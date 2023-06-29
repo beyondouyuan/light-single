@@ -3,9 +3,10 @@ import { Modal, Tabs } from 'antd';
 import { Form, Dialog } from 'freedomen'
 import uniqueId from 'lodash/uniqueId'
 import CodeEdit from 'components/CodeEditor'
-import className from 'classnames'
+import { useDispatch } from 'react-redux';
 import { setChainValueByString } from 'views/utils/util';
 import styles from './index.module.less'
+import { setRightFormChange } from 'slices/eventSlice';
 
 var currentProp = null
 var currentValue = null
@@ -22,11 +23,17 @@ const tabKeys = {
 }
 
 export default function Right({ activityColumn }) {
-
+    
     const [baseColumns, setBaseColumns] = useState([])
     const [moreColumns, setMoreColumns] = useState([])
     const [styleColumns, setStyleColumns] = useState([])
     const [formData, setFormData] = useState({})
+    const dispatch = useDispatch()
+
+    const dispatchRightFormChange = (column) => {
+        const { uuid } = column
+        dispatch(setRightFormChange({ uuid }))
+    }
 
     useEffect(() => {
         const { base = [], more = [], style = [] } = activityColumn.props || {}
@@ -34,7 +41,7 @@ export default function Right({ activityColumn }) {
         setMoreColumns(more)
         setStyleColumns(style)
         setFormData(activityColumn.data)
-        
+
     }, [activityColumn])
 
     const formEvent = ({ type, value, prop }) => {
@@ -58,12 +65,16 @@ export default function Right({ activityColumn }) {
             ))
         } else if (type === 'change') {
             prop && setChainValueByString(activityColumn.data, prop, value)
+
+            dispatchRightFormChange(activityColumn)
         }
     }
 
     const applyChange = () => {
         setChainValueByString(activityColumn.data, currentProp, currentValue)
         setFormData({ ...activityColumn.data })
+
+        dispatchRightFormChange(activityColumn)
     }
 
     const items = []
@@ -72,7 +83,7 @@ export default function Right({ activityColumn }) {
         items.push({
             key: tabKeys.base,
             label: "常用",
-            children: <div className={className("right-body-panel", "scroll-bar")}>
+            children: <div>
                 <Form
                     key={uniqueId()}
                     data={formData}
@@ -87,7 +98,7 @@ export default function Right({ activityColumn }) {
         items.push({
             key: tabKeys.more,
             label: "更多",
-            children: <div className={className("right-body-panel", "scroll-bar")}>
+            children: <div>
                 <Form
                     key={uniqueId()}
                     data={formData}
@@ -102,7 +113,7 @@ export default function Right({ activityColumn }) {
         items.push({
             key: tabKeys.style,
             label: "样式",
-            children: <div className={className("right-body-panel", "scroll-bar")}>
+            children: <div>
                 <Form
                     key={uniqueId()}
                     data={formData}
@@ -132,6 +143,6 @@ export default function Right({ activityColumn }) {
                 }
             }}
         />
-        <Tabs items={items} className={styles.tabs}/>
+        <Tabs items={items} className={styles.tabs} />
     </div>
 }

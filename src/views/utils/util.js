@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { message } from 'antd'
-import { canPutMap, sortFormSequence, INSTRUCTS, paramsKeyPrefix } from '../config'
+import { canPutMap, sortFormSequence, INSTRUCTS, paramsKeyPrefix,valueTypes } from '../config'
 import { IString } from './string'
 
 export function isSort(oldList = [], newList = []) {
@@ -275,17 +275,16 @@ export function getPreviewValue(value, libs = {}) {
 export function getCodeValue(value, rule) {
     if (typeof value === 'string' && sysPrefixLibs.some(el => value.indexOf(el) === 0))
         return value
-    //todo
-    // if (rule?.type) {
-    //     switch (rule.type) {
-    //         case valueTypes.fun:
-    //         case valueTypes.ref:
-    //         case valueTypes.unString:
-    //             return value;
-    //         case valueTypes.string:
-    //             return value.toString()
-    //     }
-    // }
+    if (rule?.type) {
+        switch (rule.type) {
+            case valueTypes.fun:
+            case valueTypes.ref:
+            case valueTypes.unString:
+                return value;
+            case valueTypes.string:
+                return value.toString()
+        }
+    }
 
     try {
         (new Function("$history", "return " + value))({ state: {} })

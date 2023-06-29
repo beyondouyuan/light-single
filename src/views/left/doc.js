@@ -1,4 +1,3 @@
-import { message } from 'antd'
 
 export const useType = {
     none: 1,
@@ -6,9 +5,8 @@ export const useType = {
     copy: 3
 }
 
-export const getFormItemLabel = (label, docName = "data", use, plugId, title) => {
+export const getFormItemLabel = (label, docName = "data", use) => {
     return label
-    // message.info("暂无相关文档")
 }
 
 //--------------------------第二个参数的下划线有特别用义

@@ -19,6 +19,14 @@ node 16 + ，npm 8 +，版本未测试
 
 `npm run build`
 
+### 截图
+
+操作界面
+![主操作界面](https://test-1256372626.cos.ap-shanghai.myqcloud.com/light-simple/main.png)
+
+实现稍微复杂点功能的设计、预览、代码
+![预览](https://test-1256372626.cos.ap-shanghai.myqcloud.com/light-simple/view.gif)
+
 ### 文档
 
 敬请期待

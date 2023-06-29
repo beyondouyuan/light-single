@@ -1,50 +1,12 @@
 import Component from './models/component'
-import { getSpace, toFirstUpperCase, toFirstLowerCase, getCodeValue, unSafeString, arrayToString, isSpecialChar } from './util'
-import { InitCodeType } from 'views/types'
-import { serviceSuffix, INSTRUCTS, RENAMES } from 'views/config'
+import { getSpace, toFirstUpperCase, getCodeValue, unSafeString, arrayToString, isSpecialChar } from './util'
+import { INSTRUCTS, RENAMES } from 'views/config'
 import Name from './models/name'
 import { IString } from './string'
 import Imodules, { moduleNames } from './models/imodule'
 import IreactBatch from './models/ireactbatch'
 import Iinfo from './models/iinfo'
 import Bus, { BUS_KEYS } from 'views/bus'
-/**
- * 转接口方法 ITEM
- * @param {*} param0 后台service 实体
- * @param {*} page 
- * @param {*} step 前面留空格
- * @returns 
- */
-export function toServiceItem({ serviceMethod, serviceUrl, serviceName, serviceComment, serviceResponseType }) {
-    const result = IString(serviceComment ? `//${serviceComment}\n` : '')
-    result.append(serviceName)
-        .appendln('(params) {')
-        .appendln(`    return Http.${serviceMethod}(\`${serviceUrl}\`, params<!config!>)`)
-        .append('}')
-        .template({
-            config: serviceResponseType ? `, { \n        responseType: "${serviceResponseType}" \n    }` : ''
-        })
-
-    return result.toString()
-}
-/** 
- * @param {*} param0 
- * @param {*} page 页面
- * @returns 
- */
-export function toInitCodeItem(params, page) {
-    let code = ''
-    if (params.initCodeType === InitCodeType.VAR) {
-        code = toInitCodeState(params)
-    } else if (params.initCodeType === InitCodeType.EFFECT) {
-        code = toInitCodeEffect(params)
-    } else if (params.initCodeType === InitCodeType.FN) {
-        code = toInitCodeCallBack(params)
-    } else if (params.initCodeType === InitCodeType.REF) {
-        code = toInitCodeRef(params)
-    }
-    return resetInstructFunction(code, page, { getName: (new Name()).get })
-}
 /** 
  * @param {*} param0 
  * @param {*} page 页面
@@ -100,16 +62,6 @@ export function toInitCodeEffect({ initCodeEffect, initCodeValue }) {
             v1: initCodeValue,
             v2: initCodeEffect ? initCodeEffect.join(', ') : ''
         }).toString()
-}
-/** 
- * 转换为 class 代码 
- * @param {*} designList 设计器数组
- * @param {*} page 后台页面实体
- * @returns 
- * @deprecated
- */
-export function toClass() {
-    return "class已经被弃用啦！"
 }
 /** 
  * 转换为 hook 版本代码 
@@ -193,7 +145,7 @@ export function toHook(designList) {
     }
 
     //format code
-    container.insertln(getImports(iModules, pageFileName))
+    container.insertln(getImports(iModules))
     let icontainer = resetInstructFunction(container.toString(), { iInfo, getName: (new Name()).get })
     try {
         return window.codeFormart(icontainer)
@@ -207,7 +159,7 @@ export function toValidClass(className = '') {
 export function getOriginalClass(item, getName) {
     return toValidClass(getName(item.data.className || item.data.prop || item.data.type || item.type).toLowerCase())
 }
-//下一个方法的工具
+
 function getClassName(item, prefix, getName) {
     return prefix + getOriginalClass(item, getName)
 }
@@ -253,33 +205,6 @@ export function toPageLess({ pageClass, pageLess, designList }, prefix = '', spa
         return toLess(designList, prefix, getName, space)
     }
 }
-export function toService(page) {
-    const { pageFileName } = page
-    if (!pageFileName) {
-        return ''
-    }
-    const serviceName = getServiceName(pageFileName)
-
-    return toServiceCode(
-        serviceName,
-        toFirstUpperCase(pageFileName) + serviceSuffix,
-        page
-    )
-}
-
-export function toInitCodeStates(designList) {
-    const { iReactBatch } = toComponents(designList)
-    const initCodes = [], states = iReactBatch.getStates()
-    for (let key in states) {
-        initCodes.push({
-            initCodeName: key,
-            initCodeValue: states[key],
-            initCodeType: InitCodeType.VAR,
-            readOnly: true
-        })
-    }
-    return initCodes
-}
 
 export function toInitCodeRefs(designList) {
     const { list, iReactBatch } = toComponents(designList)
@@ -287,29 +212,6 @@ export function toInitCodeRefs(designList) {
     renderDoms({ list })
 
     return iReactBatch.getRefs()
-}
-/**
- * 
- * @param {*} pageFileName 文件名
- * @returns service name
- */
-export function getServiceName(pageFileName) {
-    return toFirstLowerCase(pageFileName) + serviceSuffix
-}
-
-function toServiceCode(serviceName, className, page) {
-    const { services } = page
-    let service = IString("import Http from 'libs/http'\n\n")
-        .appendln(`class ${className} {`)
-
-    for (let api of services) {
-        service.appendln(toServiceItem(api))
-    }
-    service.appendln("}")
-        .append(`\nconst ${serviceName} = new ${className}()`)
-        .append(`\nexport default ${serviceName}`)
-
-    return window.codeFormart(service.toString())
 }
 
 function toComponents(designList) {
@@ -324,11 +226,10 @@ function toComponents(designList) {
     return { list, iModules, iReactBatch, iInfo }
 }
 
-function getImports(iModules, pageFileName) {
+function getImports(iModules) {
     const str = IString(iModules.toString())
 
-    str.appendln(`import ${getServiceName(pageFileName)} from 'services/${pageFileName}'`)
-        .appendln(`import styles from './index.module.less'`)
+    str.appendln(`import styles from './index.module.less'`)
 
     return str.toString()
 }
@@ -557,11 +458,6 @@ function resetInstructFunction(funString = '', { iInfo, getName } = {}) {
         [INSTRUCTS.SYS_PAGEMENUOPTIONS, arrayToString(Bus.get(BUS_KEYS.pageMenuOptions))]
     ])
     funString = funString.replaceAll(INSTRUCTS.MODAL, "Modal.")
-
-    const apiPostIndex = funString.indexOf(INSTRUCTS.API)
-    if (apiPostIndex !== -1) {
-        funString = funString.replaceAll(INSTRUCTS.API, getServiceName("exmpleService"))
-    }
 
     return funString
 }

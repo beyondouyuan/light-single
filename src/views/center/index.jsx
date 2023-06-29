@@ -1,15 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import ErrorBoundary from 'components/ErrorBoundary';
+import { useSelector } from 'react-redux'
 import Design from './design';
 import Preview from './preview';
 import Code from './code'
-import Less from './less' 
+import Less from './less'
 import styles from './index.module.less'
+import Bus, { BUS_KEYS } from 'views/bus';
 
 export default function Center(props) {
     const { activityColumn } = props
     const [designList, setDesignList] = useState([])
+    const { rightFormChange } = useSelector(state => state.event)
+
+    useEffect(() => {
+        Bus.set(BUS_KEYS.designDataList, designList)
+    }, [rightFormChange, designList])
 
     const items = [
         {
@@ -36,5 +43,5 @@ export default function Center(props) {
         }
     ]
 
-    return <Tabs items={items} className={styles.tabs}/>
+    return <Tabs items={items} className={styles.tabs} />
 }

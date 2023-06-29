@@ -6,8 +6,8 @@ import Bus, { BUS_KEYS } from '../bus'
 import { useIKnow, useLongKeyDown } from 'hooks';
 import classNames from 'classnames'
 import { useDispatch } from 'react-redux';
-import styles from './index.module.less'
 import { setComponentDrag } from 'slices/eventSlice';
+import styles from './index.module.less'
 
 const { Panel } = Collapse;
 
@@ -15,9 +15,8 @@ const iknowKey = "iknowcomp"
 
 export default function Left() {
     const dispatch = useDispatch()
-    
-    const { ctrlKey } = useLongKeyDown()
 
+    const { ctrlKey } = useLongKeyDown()
     const { iKnow, confirm } = useIKnow(iknowKey)
 
     return <div className={styles["left-body"]}>
@@ -46,7 +45,6 @@ export default function Left() {
                             sort={false}
                             list={el.children}
                             setList={_ => { /**donothing*/ }}
-                            style={{ marginTop: -10 }}
                             onStart={(e) => {
                                 dispatch(setComponentDrag({ group: el.group, type: el.children[e.oldIndex].type }))
                             }}
@@ -61,6 +59,7 @@ export default function Left() {
                                 Bus.emit(BUS_KEYS.putEnd)
                                 dispatch(setComponentDrag(null))
                             }}
+                            style={{marginTop: -10}}
                         >
                             {
                                 el.children.map((child, key) => {

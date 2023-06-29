@@ -185,7 +185,6 @@ export const pressKeys = {
 }
 
 export const interceptPressKeys = Object.values(pressKeys)
-
 //聚焦这些class 的时后快捷键有用
 export const inListenerClass = 'in-control'
 
@@ -255,3 +254,33 @@ export const RENAMES = {
     globalData: 'globalData.',
     util: 'util.'
 } 
+
+export const UsedType = {
+    //布局
+    LAYOUT: 1,
+    //容器
+    CONTAINER: 2,
+    //EL 容器
+    EL_CONTAINER: 3,
+    //普通元素
+    NORMAL: 4 
+}
+//没有聚焦时候，假设当前页面就是活跃的
+export const PAGE_ACTIVE_COLUMN_UUID = -1
+//设计器类型
+export const DesignType = {
+    //母版
+    MASTERPLATE: 1
+}
+//net plug 添加时的组件类型
+export const ComponentType = {
+    element: 1,
+    container: 2
+}
+
+export const valueTypes = {
+    string: 1,
+    unString: 2,
+    fun: 3,
+    ref: 4
+}

@@ -76,7 +76,7 @@ import {
 import { Divider } from 'antd'
 import { Region } from 'freedomen'
 import { getSpace } from '../utils/util'
-import { UsedType, valueTypes } from '../types'
+import { UsedType, valueTypes } from '../config'
 import Bus, { BUS_KEYS } from '../bus'
 
 const colLayout = () => {

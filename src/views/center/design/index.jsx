@@ -7,7 +7,7 @@ import DragItem from './item'
 import update from 'immutability-helper'
 import Bus, { BUS_KEYS } from 'views/bus'
 import { cloneDeep, uniqueId } from 'lodash';
-import { PAGE_ACTIVE_COLUMN_UUID } from 'views/types';
+import { PAGE_ACTIVE_COLUMN_UUID } from 'views/config';
 import { getPageConfigItem } from 'views/left/config'
 import className from 'classnames'
 import styles from './index.module.less'

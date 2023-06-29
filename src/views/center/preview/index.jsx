@@ -138,13 +138,11 @@ const setWindowState = (virData) => {
 }
 const classPrefix = "preiview_"
 
-export default function Preview(props) {
-    const { designList } = props
+export default function Preview({ designList }) {
     const [virData, setVirData] = useState({})
 
     const domRefs = useRef({})
     const $ref = domRefs.current
-
 
     useEffect(() => {
         const rjction = (event) => {
@@ -332,6 +330,7 @@ export default function Preview(props) {
             props.columns = columns
             props.data = sourceData
             props.onEvent = (params) => {
+                console.log(params, event)
                 try {
                     const result = eval(`() => {${event}}`)()
                     return result
@@ -488,7 +487,7 @@ export default function Preview(props) {
                 )
             }
         })
-    }, [])
+    }, []) 
 
     return createElements(designList, (new Name()).get, virData)
 }
