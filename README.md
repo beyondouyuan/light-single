@@ -28,9 +28,11 @@ node 16 + ，npm 8 +，其它版本未测试
 操作界面
 ![主操作界面](https://test-1256372626.cos.ap-shanghai.myqcloud.com/light-simple/main.png)
 
-实现稍微复杂点功能的设计、预览、代码
+如下 5 分钟实现稍微复杂点功能的设计、预览、代码，评估一下手动编码耗时效率可想而知
 ![预览](https://test-1256372626.cos.ap-shanghai.myqcloud.com/light-simple/view.gif)
 
 ### 文档
 
 敬请期待
+
+如果您觉得可能会对你有帮助，请不要吝啬小星星，以激励而使项目做的更好，非常感谢！
